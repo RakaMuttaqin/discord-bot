@@ -1,0 +1,22 @@
+{
+  "name": "vanila-bot",
+  "version": "1.0.0",
+  "description": "small bot discord",
+  "main": "src/bot.js",
+  "scripts": {
+    "start": "nodemon bot.js"
+  },
+  "author": "muttaqin",
+  "license": "ISC",
+  "dependencies": {
+    "@discordjs/rest": "^1.7.1",
+    "chalk": "^4.1.2",
+    "discord-api-types": "^0.37.39",
+    "discord-rpc": "^4.0.1",
+    "discord.js": "^14.16.3",
+    "dotenv": "^16.3.1",
+    "fs": "^0.0.1-security",
+    "node.js": "^0.0.1-security",
+    "nodemon": "^3.1.0"
+  }
+}
