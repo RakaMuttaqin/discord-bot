@@ -9,7 +9,7 @@ module.exports = {
         .setDescription("Number of messages to delete")
         .setRequired(true)
         .setMinValue(1)
-        .setMaxValue(1000) // Membatasi hingga 1000 pesan yang bisa dihapus
+        .setMaxValue(100) // Membatasi hingga 1000 pesan yang bisa dihapus
     )
     .addUserOption(option => 
       option.setName("user")
