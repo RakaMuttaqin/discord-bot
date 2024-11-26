@@ -27,7 +27,7 @@ async function searchYouTube(query) {
     const video = response.data.items[0];
     return video ? `https://www.youtube.com/watch?v=${video.id.videoId}` : null;
   } catch (error) {
-    console.error("❌ Error searching YouTube:", error);
+    console.error("❌ Error searching YouTube:", error.message);
     throw new Error("❌ Tidak dapat mencari lagu di YouTube.");
   }
 }
@@ -41,7 +41,7 @@ async function fetchStreamWithRetry(url, retries = 3) {
         quality: "highestaudio",
       });
     } catch (error) {
-      console.warn(`⚠️ Error fetching stream (attempt ${4 - retries}):`, error);
+      console.warn(`⚠️ Error fetching stream (attempt ${4 - retries}):`, error.message);
       retries--;
       if (retries === 0) {
         throw new Error("❌ Tidak dapat memuat stream dari YouTube.");
@@ -53,8 +53,6 @@ async function fetchStreamWithRetry(url, retries = 3) {
 async function playMusic(guildId) {
   const serverQueue = getQueue(guildId);
   if (!serverQueue || serverQueue.songs.length === 0) {
-    console.log("🎶 Queue kosong, meninggalkan channel.");
-    serverQueue.connection.destroy();
     setQueue(guildId, null);
     return;
   }
@@ -68,12 +66,13 @@ async function playMusic(guildId) {
       inputType: StreamType.Arbitrary,
     });
     serverQueue.player.play(resource);
-    serverQueue.player.on(AudioPlayerStatus.Idle, () => {
+
+    serverQueue.player.once(AudioPlayerStatus.Idle, () => {
       serverQueue.songs.shift(); // Hapus lagu pertama
       playMusic(guildId); // Putar lagu berikutnya
     });
 
-    serverQueue.player.on("error", (error) => {
+    serverQueue.player.once("error", (error) => {
       console.error("❌ Error pada player:", error.message);
       serverQueue.songs.shift(); // Skip lagu saat error
       playMusic(guildId);
@@ -147,13 +146,12 @@ module.exports = {
         connection.subscribe(player);
         playMusic(guildId);
 
-        // Create an embed for the song that's playing
         const embed = new EmbedBuilder()
           .setTitle("🎶 Memutar sekarang")
           .setDescription(
             `**${songData.title}**\n(Diminta oleh ${songData.requestedBy})`
           )
-          .setColor("#18e1ee") // Optional: Set color
+          .setColor("#18e1ee")
           .setTimestamp();
 
         await interaction.editReply({ embeds: [embed] });
@@ -161,13 +159,12 @@ module.exports = {
         const serverQueue = getQueue(guildId);
         serverQueue.songs.push(songData);
 
-        // Create an embed for the song added to the queue
         const embed = new EmbedBuilder()
           .setTitle("🎶 Ditambahkan ke antrian")
           .setDescription(
             `**${songData.title}**\n(Posisi: ${serverQueue.songs.length})`
           )
-          .setColor("#18e1ee") // Optional: Set color
+          .setColor("#18e1ee")
           .setTimestamp();
 
         await interaction.editReply({ embeds: [embed] });

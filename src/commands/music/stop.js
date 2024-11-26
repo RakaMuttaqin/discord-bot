@@ -16,7 +16,6 @@ module.exports = {
 
     // Stop the player and destroy the connection
     serverQueue.player.stop(); // Stop playing the current song
-    serverQueue.connection.destroy(); // Destroy the connection to leave the voice channel
     deleteQueue(guildId); // Delete the queue for the guild
 
     return interaction.reply(

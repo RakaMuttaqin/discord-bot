@@ -27,7 +27,7 @@ module.exports = {
       playMusic(guildId); // Call playMusic to play the next song
     } else {
       // If no more songs, clean up and disconnect
-      serverQueue.connection.destroy();
+      // serverQueue.connection.destroy();
       setQueue(guildId, null);
     }
 
