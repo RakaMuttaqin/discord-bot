@@ -41,7 +41,10 @@ async function fetchStreamWithRetry(url, retries = 3) {
         quality: "highestaudio",
       });
     } catch (error) {
-      console.warn(`⚠️ Error fetching stream (attempt ${4 - retries}):`, error.message);
+      console.warn(
+        `⚠️ Error fetching stream (attempt ${4 - retries}):`,
+        error.message
+      );
       retries--;
       if (retries === 0) {
         throw new Error("❌ Tidak dapat memuat stream dari YouTube.");
@@ -64,7 +67,12 @@ async function playMusic(guildId) {
     const stream = await fetchStreamWithRetry(currentSong.url);
     const resource = createAudioResource(stream, {
       inputType: StreamType.Arbitrary,
+      inlineVolume: true,
     });
+
+    const volume = serverQueue.volume || 0.7; // Default ke 50% jika tidak ada volume yang disimpan
+    resource.volume.setVolume(volume);
+
     serverQueue.player.play(resource);
 
     serverQueue.player.once(AudioPlayerStatus.Idle, () => {
